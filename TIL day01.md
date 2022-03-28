@@ -65,3 +65,26 @@
 주석
 
 HTML
+---
+# 깃 
+## git에게 작성자 누구인지 알려주기
+git config --global user.name 이름
+git config --global user.email 이메일주소
+
+git config --global --list
+
+## 일반 폴더 -> 로컬 저장소
+**git init**
+
+## 상태확인
+**git status**
+
+## Working Directory -> Staging Area
+**git add a.txt** >a.txt는 파일이름
+
+## Staging Area -> Commits
+**git commit** -m "first commit"
+
+## commit 확인(버전확인)
+**git log** 여러줄로 버전확인
+**git log --oneline** 한줄로 버전확인
