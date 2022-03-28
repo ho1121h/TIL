@@ -30,11 +30,11 @@
 
 강조
 
-'**볼드체(굵)**'
+`**볼드체(굵)**`
 
-'*이탤릭체(기울임)*'
+`*이탤릭체(기울임)*`
 
-'~~취소선~~'
+`~~취소선~~`
 
 ---
 
@@ -64,7 +64,7 @@
 
 주석
 
-목차 '삽입후 제목에따라 분류됨'
+목차 `삽입후 제목에따라 분류됨`
 
 HTML
 ---
@@ -82,14 +82,14 @@ git config --global --list
 **git status**
 
 ### Working Directory -> Staging Area
-**git add a.txt** 'a.txt는 파일이름'
+**git add a.txt** `a.txt는 파일이름`
 
 ### Staging Area -> Commits
 **git commit** -m "first commit"
 
 ### commit 확인(버전확인)
-**git log** 여러줄로 버전확인
-**git log --oneline** 한줄로 버전확인
+**git log** `여러줄로 버전확인`
+**git log --oneline** `한줄로 버전확인`
 
 ### git 을 허브에 업로드
 *** git push origin master ***
