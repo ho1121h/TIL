@@ -1,4 +1,4 @@
-# TIL(to day i learned)
+# TIL(To day I Learned)
 - 좋은 개발자가 되기 위해 하루 하루 공부나 복습한 내용을 기록으로 남긴다
 >강사님과 여러 개발자들의 TIL 을 보고 영감을 얻었다,
 
