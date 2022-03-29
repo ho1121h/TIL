@@ -23,3 +23,8 @@
 - `git switch 다른브랜치 이름` 다른 브랜치로 HEAD를 이동
 - `git switch -c 브랜치이름` 생성과 동시에 이동
 - 주의점은 브랜치를 이동하기전에 커밋을 완료하고 이동해야 한다.
+
+## merge
+- branch 로 여러 버전을 만들고 합치는 과정
+- `git branch merge 현재 해드`
+- `git graph` 로 위치 확인 
