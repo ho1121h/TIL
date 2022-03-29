@@ -1,7 +1,7 @@
 ## gitignoer
 깃 이그노어를 만들어보자
 - commit 을 하기전에 README.md 와 .gitignore 파일을 만든다
-- .gitignore 에 깃 허브에 
+- .gitignore 파일안에 깃 허브에 업로드 하지않을 파일명을 적는다.
 
 
 ## git clone
