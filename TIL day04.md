@@ -17,3 +17,24 @@
 |sorted()|반복 가능한 객체를 정렬한 새로운 리스트로 만듬|
 |str()|문자열로 변환|
 |type()|객체의 자료형을 반환|
+---
+## 모듈
+|모듈 이름|설명|
+|:---|:---|
+|re|정규 표현식|
+|datetime|날짜와 시간|
+|collections|여러 가지 콜렉션 자료형|
+|math|수학 관련 함수|
+|random|무작위 처리|
+|itertools|반복 가능한 객체에 대한 조작|
+|sqlite3|SQLite 데이터베이스|
+|csv|csv조작|
+|json|JSON 조작|
+|os|OS 조작|
+|os.path|파일 또는 디렉터리 등의 경로와 관련된 조직|
+|multiprocessing|멀티 프로세스를 사용한 병렬 처리|
+|subprocess|다른 프로세스 실행|
+|urllib|URL 관련 조작|
+|unittest|단위 테스트|
+|pdf|파이썬 디버거|
+|sys|파이썬 인터프리터 관련 변수와 함수|
