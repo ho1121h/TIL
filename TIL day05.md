@@ -2,7 +2,7 @@
 - match("문자열"):처음부터 일치
 - search("문자열"):일치하는 문자 있는지 확인
 - findall("문자열"):일치 하는 모든것의 리스트 출력
-[re 정규식](https://docs.python.org/ko/3/library/re.html)
+- [re 정규식](https://docs.python.org/ko/3/library/re.html)
 - . 문자 ("a.a")
 - ^ 시작("^a")
 - $ 끝 ("a$")
@@ -16,7 +16,7 @@
 ## html.parser
 - 간단한 HTML과 XHTML 구문 분석기
 > HTMLParser 인스턴스는 HTML 데이터를 받아서 시작 태그, 종료 태그, 텍스트, 주석 및 기타 마크업 요소를 만날 때마다 처리기 메서드를 호출
-[HTMLParser 메서드](https://docs.python.org/ko/3/library/html.parser.html?highlight=html#module-html.parser)
+- [HTMLParser 메서드](https://docs.python.org/ko/3/library/html.parser.html?highlight=html#module-html.parser)
 
 ## Beautifulsoup 
 - 뷰디풀수프는 html을 수프객체로 만들어 추출하기 쉽게함
@@ -32,9 +32,9 @@ soup=BeautifulSoup(r.text,"html.parser")
 data=soup.select("찾을속성")
 for i in data:
     print(i.text)
-   ```
+```
 
-    ```python
+```python
 import requests
 from bs4 import BeautifulSoup
 url ='크롤링할 사이트'
@@ -44,4 +44,4 @@ soup=BeautifulSoup(r.text,"html.parser")
 for i in soup.select('td[class=left]'):
     if i.a:
         print(i.a.text)
-   ```
+```
