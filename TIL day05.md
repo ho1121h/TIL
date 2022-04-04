@@ -18,6 +18,7 @@
 - [HTMLParser 메서드](https://docs.python.org/ko/3/library/html.parser.html?highlight=html#module-html.parser)
 
 ## Beautifulsoup 
+- 단순한 api가 특징인 스크래핑 라이브러리
 - 뷰디풀수프는 html을 수프객체로 만들어 추출하기 쉽게함
 - 우선 크롬에 접속 후 F12를 누르고 html 속성을 살펴보자
 - 예제
