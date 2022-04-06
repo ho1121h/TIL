@@ -44,7 +44,7 @@ def 출력(db):
 ## TIME SLEEP 적용
 > 범위 지정 웹스크래핑을 할때 과도한 조회를하면 IP밴의 위험이 있기때문에 사용
 ```python
-import csv
+import csv #csv 모듈 사용
 import time
 import requests
 from bs4 import BeautifulSoup
@@ -54,8 +54,8 @@ headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/5
 content="제목","내용"
 f=open("save4.csv","w",encoding='utf-8-sig',newline="")
 writer=csv.writer(f)
-writer.writerow(content)
-in_data=[]
+writer.writerow(content)#1차원 데이터 저장
+in_data=[]#저장할 공간
 #data 수집
 for page in range(1,6):
     print(f"page{page} 크롤링중...")
@@ -71,5 +71,6 @@ for page in range(1,6):
                           {"내용": i.span.text.strip()}])
     time.sleep(5)#5초의 딜래이
 #저장
-writer.writerow(in_data)
+writer.writerows(in_data)#2차원 에 추출
+
 ```
