@@ -89,3 +89,45 @@ for i in reader:
     print(i[0],i[1])#개별 원소 출력
 
 ```
+---
+
+## 개별 복습
+```python
+#암호화폐에 대한 뉴스 제목,내용 뽑아오기
+#1. 헤들리스 사용,1~5페이지 출력
+#2. csv에 저장 후 출력
+import csv
+import time
+from selenium import webdriver
+from bs4 import BeautifulSoup
+f=open("Q3.csv","w",encoding='utf-8-sig',newline="")
+writer=csv.writer(f)
+content="제목","내용"
+writer.writerow(content)
+in_data=[]
+for i in range(1,6):
+    op=webdriver.ChromeOptions()
+    op.headless=True #열지않고 실행
+    op.add_argument("window-size=1920x1080")#옵션에 대한 내용ㅇ
+    op.add_argument('User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36')
+    b=webdriver.Chrome(options=op)
+    b.maximize_window()
+    b.get(f"https://search.naver.com/search.naver?where=news&sm=tab_pge&query=%EC%95%94%ED%98%B8%ED%99%94%ED%8F%90&sort=0&photo=0&field=0&pd=0&ds=&de=&cluster_rank=100&mynews=0&office_type=0&office_section_code=0&news_office_checked=&nso=so:r,p:all,a:all&start={i-1}1")# 링크와 페이지 설정
+    s=BeautifulSoup(b.page_source,'html.parser')
+    data = s.select('div.news_area')#스크래핑할 공간 셀렉트
+    for j in data:
+        if j.a:
+            in_data.append([j.div.next_sibling.text.strip(),
+                            j.div.next_sibling.next_sibling.next_sibling.text.strip()])
+    time.sleep(3)
+    b.quit()
+writer.writerows(in_data)
+f.close()
+f=open("Q3.csv","r",encoding='utf-8-sig',newline="")#csv에 저장할꺼면 sig꼭 써야함
+reader=csv.reader(f)
+for i in reader:#읽어오기
+    print(i)
+
+
+
+```
