@@ -55,8 +55,8 @@ op=webdriver.ChromeOptions()
 op.headless = True
 op.add_argument("window-size=1920x1080")
 op.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36')
-b=webdriver.Chrome(options=op)
-b.maximize_window()
+b=webdriver.Chrome(options=op)#크롬의 옵션사용
+b.maximize_window()#최대창 크기로 사용
 url = "https://naver.com"
 b.get(url)
 b.find_element_by_xpath('//*[@id="query"]').send_keys('암호화폐\n')
@@ -79,13 +79,13 @@ for i in range(1,6):
     data=soup.select('div.news_area')
     for i in data:
         if i.a:
-            l.append([i.select_one('a.news_tit').text,i.select_one('a.api_txt_lines.dsc_txt_wrap').text])
+            l.append([i.select_one('a.news_tit').text,i.select_one('a.api_txt_lines.dsc_txt_wrap').text])#리스트에 추가할 원소
     print("화면전환")
-writer.writerows(l)
-f.close()
+writer.writerows(l)#l이라는 리스트에 저장
+f.close()# 닫기
 f=open("Q3.csv","r",encoding='utf-8-sig',newline="")
-reader=csv.reader(f)
+reader=csv.reader(f)#csv에 저장된 정보 모두 불러오기
 for i in reader:
-    print(i[0],i[1])
+    print(i[0],i[1])#개별 원소 출력
 
 ```
