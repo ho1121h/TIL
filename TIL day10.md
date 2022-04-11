@@ -199,3 +199,77 @@ plt.pie(data,labels=name,autopct='%.2f%%',explode=e,wedgeprops=w)#구멍
 plt.show()
 
 ```
+### 막대 그래프
+```python
+단어=['좋아','싫어','부정','긍정']
+회수=[10,100,5,20]
+plt.bar(단어,회수,color=['r','g','b','c'],alpha=0.5)#그래프의 색 설정 및 불투명도
+plt.plot(회수,'b--')
+plt.ylim(1,110)#y축의 범위 설정
+#막대그래프 눕히기
+import numpy as np
+단어=['좋아','싫어','부정','긍정']
+회수=[10,100,5,20]
+d=np.arange(4)
+plt.barh(d,회수)#가로바
+plt.yticks(d,단어)#X축을 y축으로
+
+# 누적 그래프
+x=['득표율']
+y1=[10]
+y2=[20]
+y3=[30]
+l_d=[40]
+plt.bar(x,l_d)
+plt.bar(x,y3,bottom=l_d)
+plt.bar(x,y2,bottom=y3[0]+l_d[0])
+plt.bar(x,y1,bottom=y2[0]+y3[0]+l_d[0])
+
+```
+---
+### 판다스를 이용한 그래프
+```python
+df=pd.read_csv('경찰청 강원도경찰청_음주교통사고 발생 현황_20201231.csv',encoding='euc-kr')
+
+'''
+1.저장된 엑셀 불러오기
+2.사망인원,부상인원, 발생횟수 로 누적그래프를 만드시오
+
+'''
+x=['사망인원','부상인원','발생횟수']
+#x1=['부상인원']
+#x2=['발생횟수']
+a=df['사망']
+b=df['부상']
+c=df['발생']
+plt.bar(x[0],a[0])
+plt.bar(x[0],a[1],bottom=a[0])
+plt.bar(x[0],a[2],bottom=a[1]+a[0])
+plt.bar(x[0],a[3],bottom=a[2]+a[1]+a[0])
+plt.bar(x[0],a[4],bottom=a[3]+a[2]+a[1]+a[0])
+
+plt.bar(x[1],b[0])
+plt.bar(x[1],b[1],bottom=b[0])
+plt.bar(x[1],b[2],bottom=b[1]+b[0])
+plt.bar(x[1],b[3],bottom=b[2]+b[1]+b[0])
+plt.bar(x[1],b[4],bottom=b[3]+b[2]+b[1]+b[0])
+
+plt.bar(x[2],c[0])
+plt.bar(x[2],c[1],bottom=c[0])
+plt.bar(x[2],c[2],bottom=c[1]+c[0])
+plt.bar(x[2],c[3],bottom=c[2]+c[1]+c[0])
+plt.bar(x[2],c[4],bottom=c[3]+c[2]+c[1]+c[0])
+'''
+그래프는 만들어지나 속성의 일치가 안됨, 년도가 따로논다
+'''
+b=np.array([0,0,0]) #초기화 
+for i in range(len(df.values)):
+    plt.bar(x,c_df.values[i],bottom=b)#누적합
+    b+=c_df.values[i]
+plt.show()
+#됨
+
+
+
+
+```
