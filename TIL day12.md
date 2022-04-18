@@ -168,3 +168,82 @@ plt.axis('off')
 plt.show
 #가장 많은 단어가 제일 큰 글자로 나온다.
 ```
+# 실습
+```python
+import csv
+from selenium import webdriver
+from bs4 import BeautifulSoup
+browser = webdriver.Chrome()
+browser.implicitly_wait(10)
+browser.maximize_window()
+url = "https://naver.com"
+browser.get(url)
+browser.find_element_by_xpath('//*[@id="query"]').send_keys('삼성\n')
+browser.implicitly_wait(10)
+browser.find_element_by_xpath('//*[@id="lnb"]/div[1]/div/ul/li[2]/a').click()
+title="제목","내용"
+f=open("삼성.csv","w",encoding='utf-8-sig',newline="")
+writer=csv.writer(f)
+writer.writerow(title)
+l=[]
+for i in range(1,6):
+    print(f"{i}페이지")
+    browser.implicitly_wait(10)
+    browser.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+    browser.implicitly_wait(10)
+    html=browser.page_source
+    browser.implicitly_wait(10)
+    browser.find_element_by_xpath(f'//*[@id="main_pack"]/div[2]/div/div/a[{i + 1}]').click()
+    soup = BeautifulSoup(html, "html.parser")
+    data=soup.select('div.news_area')
+    for i in data:
+        if i.a:
+            l.append([i.select_one('a.news_tit').text,i.select_one('a.api_txt_lines.dsc_txt_wrap').text])
+    print("화면전환")
+writer.writerows(l)
+f.close()
+
+from wordcloud import WordCloud #워드클라우드모듈
+import matplotlib.pyplot as plt #그래프모듈
+from collections import Counter#횟수적용모듈
+from konlpy.tag import Okt
+import pandas as pd
+
+df = pd.read_csv('삼성.csv',encoding='utf-8-sig')
+df
+
+
+text = df['내용']
+text
+
+
+ok_t=Okt()
+data1=[]
+for i in text:
+    t=ok_t.nouns(i)#의미있는 명사
+    data1.extend(t)#1차원 데이터리스트에 추가
+data1
+
+
+
+data2=[i for i in data1 if len(i)>1]#단어 2개이상인것만 고루기
+data2
+
+
+data3=Counter(data2)#갯수 
+data3
+
+data4=data3.most_common(100)#내림차순
+data4
+
+data5=dict(data4)
+data5
+
+wc=WordCloud(font_path="C:\Windows\Fonts\malgun.ttf",background_color='white')
+g_data=wc.generate_from_frequencies(data5)
+plt.figure(figsize=(10,10))
+plt.axis('off')
+plt.imshow(g_data)
+plt.show() 
+
+```
