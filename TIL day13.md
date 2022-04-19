@@ -106,7 +106,10 @@ X=data
 #3.모델 생성 
 from sklearn.neighbors import KNeighborsClassifier#모듈사용
 kn = KNeighborsClassifier()
+#4.학습
 kn.fit(X,Y)
+#5.테스트
+print(kn.predict([7,40],[30,450]))
 ```
 ---
 
