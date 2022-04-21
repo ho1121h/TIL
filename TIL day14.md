@@ -12,7 +12,7 @@ t1=load_iris()
 t1
 f=[2,3]#2행,3열
 X=t1.data[:,f]#행 전부
-Y=t1.target
+Y=t1.target#t1의 y값을 가져옴 영역을 시각화하기위함
 m=SVC(kernel='linear',random_state=0)
 m.fit(X,Y)#훈련 메서드
 
@@ -193,11 +193,132 @@ Embarked       0.00
 ##데이터 타입
 범주형=['PassengerId','Pclass','Name','Sex','Ticket','Cabin','Embarked'] #오븢젝트
 숫자형=['Age','SibSp','Parch','Fare']#플롯
+df info()
+'''
+#   Column       Non-Null Count  Dtype  
+---  ------       --------------  -----  
+ 0   PassengerId  1309 non-null   int64  
+ 1   Pclass       1309 non-null   int64  
+ 2   Name         1309 non-null   object 
+ 3   Sex          1309 non-null   object 
+ 4   Age          1309 non-null   float64
+ 5   SibSp        1309 non-null   int64  
+ 6   Parch        1309 non-null   int64  
+ 7   Ticket       1309 non-null   object 
+ 8   Fare         1308 non-null   float64
+ 9   Cabin        295 non-null    object 
+ 10  Embarked     1309 non-null   object 
+dtypes: float64(2), int64(4), object(5)
+
+'''
 
 for i in 범주형:
-    df[i]=df[i].astype(object)
+    df[i]=df[i].astype(object)#범주형 전부 오브젝트로 변환
 for i in 숫자형:
-    df[i]=df[i].astype(float)
-df['SibSp']=df['SibSp'].astype(int)
-df['Parch']=df['Parch'].astype(int)
+    df[i]=df[i].astype(float)#숫자형 전부 실수형으로 변환
+df['SibSp']=df['SibSp'].astype(int)#정수형으로변환
+df['Parch']=df['Parch'].astype(int)#정수형으로 변환
+'''
+ #   Column       Non-Null Count  Dtype  
+---  ------       --------------  -----  
+ 0   PassengerId  1309 non-null   object 
+ 1   Pclass       1309 non-null   object 
+ 2   Name         1309 non-null   object 
+ 3   Sex          1309 non-null   object 
+ 4   Age          1309 non-null   float64
+ 5   SibSp        1309 non-null   int32  
+ 6   Parch        1309 non-null   int32  
+ 7   Ticket       1309 non-null   object 
+ 8   Fare         1308 non-null   float64
+ 9   Cabin        295 non-null    object 
+ 10  Embarked     1309 non-null   object 
+
+'''
+def f(ldf, rdf, on, how='inner',index=None):
+    if index is True:
+        return pd.merge(ldf,rdf,how=how,left_index=True,right_index=True)
+    else:
+         return pd.merge(ldf,rdf,how=how,on=on)
+
+one_hot_df=f(
+df,pd.get_dummies(df['Sex'],prefix='Sex'),on=None,index=True)
+one_hot_df=f(
+one_hot_df,pd.get_dummies(df['Pclass'],prefix='Pclass'),on=None,index=True)
+one_hot_df=f(
+one_hot_df,pd.get_dummies(df['Embarked'],prefix='Embarked'),on=None,index=True)
+one_hot_df
+#원핫 더미데이터 추가 성별 ,클래스, Embarked가 분류됨
+#참 1, 거짓 0
+one_hot_df.columns.to_list()
+'''
+['PassengerId',
+ 'Pclass',
+ 'Name',
+ 'Sex',
+ 'Age',
+ 'SibSp',
+ 'Parch',
+ 'Ticket',
+ 'Fare',
+ 'Cabin',
+ 'Embarked',
+ 'Sex_female',
+ 'Sex_male',
+ 'Pclass_1',
+ 'Pclass_2',
+ 'Pclass_3',
+ 'Embarked_C',
+ 'Embarked_Q',
+ 'Embarked_S']
+
+'''
+Y_true #트레인 데이터
+
+ck1=['Sex','Pclass','Embarked']
+for i in ck1:
+    ck_df=pd.merge(one_hot_df[i],Y_true,left_index=True,right_index=True)
+    sns.countplot(x='Survived',hue=i,data=ck_df)
+    plt.show()
+#ck1(성별에 따른 생존수,클래스에 따른 생존수,Embarked에 따른 생존수)에 대한 시각화
+ck1=['Sex','Pclass','Embarked']
+ck_df2=pd.merge(one_hot_df[ck1],Y_true,left_index=True,right_index=True)
+g=sns.catplot(x='Sex',hue='Pclass',col='Survived',kind='count' ,data=ck_df2)
+#왼쪽표:p클래스에 따른 남녀 사망수 ,오른쪽:남녀 생존수
+#남자가 사망 수가 더많고 클래스가 낮을 수록 사망수가 많음을 볼 수 있음
+
+[name.split('_')[0] for name in one_hot_df.columns.to_list()]
+'''
+['PassengerId',
+ 'Pclass',
+ 'Name',
+ 'Sex',
+ 'Age',
+ 'SibSp',
+ 'Parch',
+ 'Ticket',
+ 'Fare',
+ 'Cabin',
+ 'Embarked',
+ 'Sex',
+ 'Sex',
+ 'Pclass',
+ 'Pclass',
+ 'Pclass',
+ 'Embarked',
+ 'Embarked',
+ 'Embarked']'''#  _가 사라짐
+ [name for name in one_hot_df.columns.to_list() 
+          if name.split('_')[0] in ck1 
+          and '_' in name
+         ]+['Sex']
+'''
+['Sex_female',
+ 'Sex_male',
+ 'Pclass_1',
+ 'Pclass_2',
+ 'Pclass_3',
+ 'Embarked_C',
+ 'Embarked_Q',
+ 'Embarked_S',
+ 'Sex']'''# _가 들어간것 dummies 컬럼이 따로 분류됨
 ```
