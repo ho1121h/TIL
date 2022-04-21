@@ -322,3 +322,27 @@ g=sns.catplot(x='Sex',hue='Pclass',col='Survived',kind='count' ,data=ck_df2)
  'Embarked_S',
  'Sex']'''# _가 들어간것 dummies 컬럼이 따로 분류됨
 ```
+## 딥러닝 실습 단계 
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+#1.data의 수집
+data=pd.read_csv('data.csv')
+X = pd.DataFrame(data,columns=['D_length','D_weight'])# 보통 속성 열 행
+Y = pd.DataFrame(data,columns=['y'])# 보통 값, 정답
+np_X=np.array(X)#넘파이로 정리한 2차원 데이터
+np_Y=np.array(Y['y'], dtype=int)#정수로 타입 변환
+#2.data 전처리
+mean=np.mean(np_X,axis=0)
+std=np.std(np_X,axis=0)
+sc_t_X=(np_X-mean)/std
+t_x,tt_x,t_y,tt_y = train_test_split(sc_t_X,np_Y,random_state=10)
+#3.모델 생성 및 학습
+kn=KNeighborsClassifier().fit(t_x,t_y)
+#4.테스트 및 검증
+kn.score(tt_x,tt_y)
+```
