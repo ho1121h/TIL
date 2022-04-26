@@ -86,9 +86,13 @@ dt = gs.best_estimator_
 dt.score(t_x,t_y),dt.score(tt_x,tt_y)
 
 gs.best_params_#이상적인 파라미터 :{'min_impurity_decrease': 0.0001}
+
+
+
 ```
 
 ---
+- 모듈 사용 예
 ```py
 from sklearn.tree import DecisionTreeClassifier#의사결정트리사용
 from sklearn.model_selection import cross_val_score#교차검증
