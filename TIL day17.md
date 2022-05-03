@@ -230,4 +230,30 @@ s_t_x = t_x/255.0
 s_t_x = s_t_x.reshape(-1,28*28)
 from sklearn.model_selection import train_test_split
 t_x, v_x, t_y, v_y = train_test_split(s_t_x,t_y ,test_size=0.2, random_state=42)
-t_x.shape
+t_x.shape#(48000, 784)
+
+#레이어 쌓기 1번방법
+dense1 = keras.layers.Dense(100,activation='sigmoid',input_shape=(784,))#1번레이어
+dense2 = keras.layers.Dense(10,activation='softmax')#2번레이어 softmax 는 말단과 연결
+model =keras.Sequential([dense1,dense2])#2개의 레이어를 합침
+model.summary() #잘 연결됬는지 확인
+
+#레이어 쌓기 2번 방법
+model =keras.Sequential([
+    keras.layers.Dense(100,activation='sigmoid',input_shape=(784,),name='hidden')
+    , keras.layers.Dense(10,activation='softmax',name = 'output')
+],name='ck')
+model.summary()#잘 연결됬는지 확인
+
+#레이어를 쌓은후(1~2번) 컴파일을하고 학습을하면 끝
+model.compile(loss='sparse_categorical_crossentropy',metrics='accuracy')
+model.fit(t_x,t_y,epochs=5)
+```
+- 간단하게 레이어 쌓고 컴파일
+```py
+model = keras.Sequential()#모델 생성
+model.add(keras.layers.Flatten(input_shape=(28,28)))#add()로 간단하게 추가,입력층
+model.add(keras.layers.Dense(100,activation='relu',input_shape=(784,),name='hidden'))#은닉층
+model.add(keras.layers.Dense(10,activation='softmax',name = 'output'))#출력층    
+model.summary()
+```
