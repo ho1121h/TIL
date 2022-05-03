@@ -186,7 +186,26 @@ m2.evaluate(t_x,t_y)# m1 의 학습된 모델이 불러와짐
 m3 = keras.models.load_model('m1.h5')    
 m3.evaluate(t_x,t_y)
 ```
+- 인공신경망생성
+```py
+m = keras.Sequential()
+m.add(keras.layers.Flatten(input_shape=(28,28)))
+m.add(keras.layers.Dense(100,activation='relu'))
+m.add(keras.layers.Dropout(0.3))
+m.add(keras.layers.Dense(10,activation='softmax'))
+#신경망의 구축
+m.compile(loss='sparse_categorical_crossentropy',
+          optimizer='adam',metrics='accuracy')
+#콜백함수:동작중에 실행할 함수
+ck_p = keras.callbacks.ModelCheckpoint('best_m.h',save_best_only=True)
+hy = m.fit(t_x,t_y, epochs=20,validation_data=(v_x,v_y),callbacks=[ck_p])#콜백은 학습도중에 써야함
+plt.plot(hy.history['loss'])
+plt.plot(hy.history['val_loss'])
+```
+
 ---
+
+
 ## CNN 작업
 - 이미지를 이용한 학습
 #콜백
