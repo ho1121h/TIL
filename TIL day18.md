@@ -186,3 +186,77 @@ m2.evaluate(t_x,t_y)# m1 의 학습된 모델이 불러와짐
 m3 = keras.models.load_model('m1.h5')    
 m3.evaluate(t_x,t_y)
 ```
+---
+## CNN 작업
+- 이미지를 이용한 학습
+#콜백
+#얼리스타핑
+#검증점수
+#코드라인 완성하기
+
+1. 최적을 모델 기록을 위한 코드라인적용
+
+2. 조건달성시 정지를 위한 코드라인
+
+3. 검증data를 이용한 모델 평가
+```py
+from tensorflow import keras
+from sklearn.model_selection import train_test_split
+from keras.datasets.fashion_mnist import load_data
+(x_data,y_data),(t_x_data,t_y_data) = load_data()
+x_data = x_data.reshape(-1,28,28,1)/255.0 #이미지데이터의 전처리
+
+t_x, tt_x, t_y, tt_y = train_test_split(x_data,y_data,test_size=0.2,random_state=42)
+
+m = keras.Sequential()#모델 객체 생성
+m.add(keras.layers.Conv2D(32,kernel_size=3,activation='relu',padding='same',input_shape= (28,28,1)))#단일 피쳐
+m.add(keras.layers.MaxPool2D(2))#풀링작업
+#커널사이즈 = 가중치 사이즈
+m.add(keras.layers.Conv2D(64,kernel_size=(3,3),activation='relu',padding='same'))
+m.add(keras.layers.MaxPool2D(2))#다시 폴링
+#뉴런층 생성
+m.add(keras.layers.Flatten())
+m.add(keras.layers.Dense(100,activation='relu'))
+m.add(keras.layers.Dropout(0.4))
+m.add(keras.layers.Dense(10,activation='softmax'))
+m.compile(loss='sparse_categorical_crossentropy',
+          optimizer='adam',metrics='accuracy')
+m.summary()
+#콜백함수생성
+ck_p = keras.callbacks.ModelCheckpoint('best2_m.h5',save_best_only=True)
+e_st = keras.callbacks.EarlyStopping(patience=2,restore_best_weights=True
+                                    )
+hy = m.fit(t_x,t_y, epochs=20,validation_data=(tt_x,tt_y),callbacks=[ck_p,e_st])
+
+#데이터 확인을 위해 시각화
+import pandas as pd
+import matplotlib.pyplot as plt
+plt.plot(hy.history['loss'])
+plt.plot(hy.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train','val'])
+plt.show()
+
+plt.imshow(tt_x[0].reshape(28,28),cmap = 'gray_r')#이미지화
+plt.show()#가방이 출력됨
+
+ck_data = m.predict(tt_x[0:1])
+plt.bar(range(1,11),ck_data[0])
+
+import numpy as np
+classes = ['티셔츠','바지','스웨터','드레스',
+           '코트','샌달','셔츠','스니커즈','가방','앵클 부츠']
+classes[np.argmax(ck_data)]
+ck_data = t_x_data.reshape(-1,28,28,1)/255.0 
+m.evaluate(ck_data,t_y_data)
+
+y_l=m.predict(ck_data[0:10])#10개
+classes[np.argmax(y_l[1:2])]
+plt.imshow(ck_data[1].reshape(28,28),cmap = 'gray_r')
+plt.show()
+for i in range(len(y_l)):
+    print(classes[np.argmax(y_l[i:i+1])])
+    plt.imshow(ck_data[i].reshape(28,28),cmap = 'gray_r')
+    plt.show()#10개의 이미지 출력
+```
