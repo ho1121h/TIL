@@ -1,4 +1,4 @@
-## 신경망 퍼셉트론 
+## 신경망 퍼셉트론 TIL 17 이지만 그냥 챕터라 이해하면됨
 
 ```py
 from sklearn.linear_model import Perceptron #신경망 퍼셉트론 클래스
@@ -105,3 +105,129 @@ XOR(X[0]),XOR(X[1]),XOR(X[2]),XOR(X[3])
 #(0, 1, 1, 0)
 
 ```
+---
+신경망을 만들면 입력층 은닉층 출력층이 존재한다
+파이썬으로 구현한 신경망 함수(얼추)
+```py
+import numpy as np
+def actf(x):
+    return 1/(1+np.exp(-x))#시그모이드 함수
+def d_actf(x):
+    return x*(1-x)#시그모이드 함수를 미분 
+# y = wx + b
+w=np.array([[1,2,3],
+            [3,4,5]])
+x=np.array([[4,5],
+            [6,7],
+           [8,9]])
+w.dot(x)
+
+X = np.array([[0,0,1],[0,1,1],[1,0,1],[1,1,1]])
+y = np.array([[0],[1],[1],[0]])
+in_n = 3#3개입력 층
+h_n = 6 #은닉층
+out_n = 1# 출력 층
+np.random.seed(5)
+# 초기값
+w0 = 2*np.random.random((in_n,h_n))-1
+w1 = 2*np.random.random((h_n,out_n))-1
+
+for i in range(10000):
+    l0 = X#1층
+    # 순 전 파
+    #입력*W0
+    net1 =np.dot(l0,w0)
+    l1=actf(net1)
+    l1[:,-1] = 1#은닉층
+    net2 = np.dot(l1,w1)
+    l2 = actf(net2)#결과
+    #역전파 알고리즘적용
+    l2_e = l2-y#오차
+    l2_d=l2_e*d_actf(l2)#미분(출력단의 델타값)
+    
+    l1_e = np.dot(l2_d,w1.T)#은닉 오차
+    l1_d=l1_e*d_actf(l1)#미분 (은닉단의 델타값)
+    #가중치 변화를 적용
+    w1 += -0.2*np.dot(l1.T,l2_d)
+    w0 += -0.2*np.dot(l0.T,l1_d)
+    if i ==10:
+        print(l2)
+        print()
+    if i ==100:
+        print(l2)
+        print()
+    if i ==1000:
+        print(l2)
+        print()
+    if i ==10000:
+        print(l2)
+        print()
+    
+    #print(l2)
+print(l2)
+#y 값 = 0 1 1 0
+
+```
+- 다른방법
+```py
+import numpy as np
+X = np.array([[0,0,1],[0,1,1],[1,0,1],[1,1,1]])
+y = np.array([[0],[1],[1],[0]])
+in_n = 3#3개입력 층
+h_n = 6 #은닉층
+out_n = 1# 출력 층
+np.random.seed(5)
+# 초기값
+w0 = 2*np.random.random((in_n,h_n))-1 #0
+w1 = 2*np.random.random((h_n,out_n))-1
+X.shape , w0.shape, X.dot(w0).shape,w1.shape,X.dot(w0).dot(w1).shape #4 개의 값 3개의 입력정보
+'''((4, 3), (3, 6), (4, 6), (6, 1), (4, 1))
+'''
+end=X.dot(w0).dot(w1)
+(end-y).shape,w1.T.shape,(end-y).dot(w1.T).shape
+'''((4, 1), (1, 6), (4, 6))
+'''
+```
+--- 
+- 이렇게 이해하면 되지만 모듈을 쓰면 간단하다
+### 케라스 모듈 
+- 단층(1층) 으로 쌓기
+```py
+from tensorflow import keras#모듈불러옴
+import numpy as np
+(t_x,t_y),(tt_x,tt_y) = keras.datasets.fashion_mnist.load_data()#패션데이터 불러옴
+
+s_t_x = t_x/255.0
+s_t_x = s_t_x.reshape(-1,28*28)
+s_t_x.shape# (60000,784) 784개의 피처가 존재
+
+from sklearn.linear_model import SGDClassifier #경사하강법
+from sklearn.model_selection import cross_validate#교차검증법
+sc = SGDClassifier(loss = 'log',max_iter=5, random_state=42)#매개변수지정
+scr = cross_validate(sc, s_t_x,t_y)
+np.mean(scr['test_score'])
+import tensorflow as tf
+
+from sklearn.model_selection import train_test_split
+t_x, v_x, t_y, v_y = train_test_split(s_t_x,t_y ,test_size=0.2, random_state=42)
+#입력 출력 갯수를 정하자=10개, 활성화함수= 다중분류는 소프트 맥스 ,단일은 시그모이드
+dense = keras.layers.Dense(10,activation='softmax',input_shape=(784,))
+#단층으로 쌓음
+model = keras.Sequential(dense)
+#컴파일
+model.compile(loss='sparse_categorical_crossentropy',metrics='accuracy
+#완성된 모델 학습
+model.fit(t_x,t_y,epochs=10)
+#검증 데이터로 검증
+model.evaluate(v_x,v_y)
+```
+- 여러층으로 쌓아보기
+```py
+from tensorflow import keras
+import numpy as np
+(t_x,t_y),(tt_x,tt_y) = keras.datasets.fashion_mnist.load_data()
+s_t_x = t_x/255.0
+s_t_x = s_t_x.reshape(-1,28*28)
+from sklearn.model_selection import train_test_split
+t_x, v_x, t_y, v_y = train_test_split(s_t_x,t_y ,test_size=0.2, random_state=42)
+t_x.shape
