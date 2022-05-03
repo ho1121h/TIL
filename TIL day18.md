@@ -86,3 +86,103 @@ plt.plot(history3.history['loss'])#잘학습 됬는지 확인
 plt.plot(history3.history['val_loss'])
 
 ```
+
+- 생성된 모델 시각화 및 저장
+
+```py
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+np.random.seed(42)#랜덤으로 가져올 데이터
+tf.random.set_seed(42)#가져올 데이터가 고정
+
+data = fetch_california_housing()
+in_data = StandardScaler().fit_transform(data.data)
+x_data, tt_x, y_data, tt_y =train_test_split(in_data,data.target ,random_state=42)
+
+t_x, v_x,t_y,v_y = train_test_split(x_data,y_data, random_state= 42, test_size= 0.2)
+#모델 생성, 레이어 생성
+m = keras.models.Sequential()
+m.add(keras.layers.Flatten(input_shape=t_x.shape[1:]))
+m.add(keras.layers.Dense(30,activation='relu'))
+m.add(keras.layers.Dense(1))
+m.summary()
+
+keras.utils.plot_model(m,'m.png')#이미지화
+keras.utils.plot_model(m,"m.png",show_shapes=True)#인풋,아웃풋값도 이미지화
+#컴파일 및 학습
+m.compile(optimizer=keras.optimizers.SGD(learning_rate=1e-3),loss='mean_squared_error',metrics='accuracy')
+hy=m.fit(t_x,t_y,validation_data=(v_x,v_y),epochs = 20)
+t_hy = m.evaluate(tt_x,tt_y)
+
+```
+---
+### 드롭아웃
+- 학습한 데이터가 과적합 됬을때 해결방법
+```py
+#외부 모듈 수집
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+(t_x,t_y),(tt_x,tt_y) = keras.datasets.fashion_mnist.load_data()
+s_t_x = t_x/255.0
+s_tt_x=tt_x/255.0
+from sklearn.model_selection import train_test_split
+t_x, v_x, t_y, v_y = train_test_split(s_t_x,t_y ,test_size=0.2, random_state=42)
+#모델 1생성
+m=keras.Sequential()
+m.add(keras.layers.Flatten(input_shape=t_x.shape[1:]))#784
+m.add(keras.layers.Dense(100,activation='relu'))#100
+m.add(keras.layers.Dense(300,activation='relu'))#300
+m.add(keras.layers.Dense(10,activation='softmax'))
+m.compile(optimizer='sgd',loss='sparse_categorical_crossentropy',metrics='accuracy')
+hy = m.fit(t_x,t_y,validation_data=(v_x,v_y),epochs = 20)
+plt.plot(hy.history['loss'])
+plt.plot(hy.history['val_loss'])# 로스가 정상적으로 감소
+
+# 모델 2 생성
+
+m1=keras.Sequential()
+m1.add(keras.layers.Flatten(input_shape=t_x.shape[1:]))#784
+m1.add(keras.layers.Dense(100,activation='relu'))#100
+m1.add(keras.layers.Dense(300,activation='relu'))#300
+m1.add(keras.layers.Dense(10,activation='softmax'))
+m1.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics='accuracy')
+hy = m1.fit(t_x,t_y,validation_data=(v_x,v_y),epochs = 20)
+plt.plot(hy.history['loss'])
+plt.plot(hy.history['val_loss'])#검증 로스가 발산함을 볼 수 있음
+
+#뉴런이 너~~무 많다 걸러주자
+m1=keras.Sequential()
+m1.add(keras.layers.Flatten(input_shape=t_x.shape[1:]))#784
+m1.add(keras.layers.Dense(100,activation='relu'))#100
+m1.add(keras.layers.Dropout(0.3))#30퍼의 뉴런을 삭제
+m1.add(keras.layers.Dense(300,activation='relu'))#300
+m1.add(keras.layers.Dense(10,activation='softmax'))
+m1.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics='accuracy')
+hy = m1.fit(t_x,t_y,validation_data=(v_x,v_y),epochs = 20)
+plt.plot(hy.history['loss'])
+plt.plot(hy.history['val_loss'])#응 정상적으로 줄어들어
+
+```
+- 가중치 저장
+``` py
+m1.save_weights('m_1_w.h5')#모델의 웨이트값 저장
+
+m1.save('m1.h5')# 모델 저장
+```
+- 학습된 가중치,모델 불러오기
+```py
+m2.load_weights("m_1_w.h5")
+m2.evaluate(t_x,t_y)# m1 의 학습된 모델이 불러와짐
+
+m3 = keras.models.load_model('m1.h5')    
+m3.evaluate(t_x,t_y)
+```
