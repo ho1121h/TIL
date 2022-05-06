@@ -69,6 +69,7 @@ sent_tokenize(t4)
     - 의존 형태소
 - 에디가 책을 읽었다-> 에디, 책 / 가 ,을, 읽, 었, 다
 - 띄어쓰기에 따라 단어뜻이 달라지는데 한국어는 띄어쓰기를 안해도 뜻이 전달되기에 형태소를 이해해야한다
+[형태소](https://konlpy.org/ko/latest/morph/#pos-tagging-with-konlpy)
 ```py
 t6="I am actively looking for Ph.D. students. and you are a Ph.D. student."
 from nltk.tokenize import word_tokenize
