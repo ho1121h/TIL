@@ -129,9 +129,9 @@ for i in data:#i는 문장
                ,left_pad_symbol="SS", right_pad_symbol="SE")
     data_l += [t for t in bg]
 
-4.
-cfd = ConditionalFreqDist(data_l)
-cpd = ConditionalProbDist(cfd,MLEProbDist)
+4. 모델 학습
+cfd = ConditionalFreqDist(data_l)#조건부확률처리(토큰리스트),내가입력한 데이터들의 빈도수를 출력 할 수 있다.
+cpd = ConditionalProbDist(cfd,MLEProbDist) #단어의 정보를 가짐,그리고 그단어에 대해 샘플들이 존재, = 이빈도수로 추출
 
 5.
 st = 'SS'#문장의 시작
