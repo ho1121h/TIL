@@ -167,7 +167,7 @@ m2.add(BatchNormalization(momentum=0.95,epsilon=0.005
                          gamma_initializer=Constant(value=0.9)))
 m2.add(Dense(3,activation='softmax'))
 m2.summary()
-#params들이 배치정규화로 
+#params들이 배치정규화로 다시줄어듬
 '''
 Model: "sequential_1"
 _________________________________________________________________
