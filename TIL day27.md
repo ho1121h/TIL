@@ -253,3 +253,119 @@ hy2 = m2.fit(t_x,t_y,validation_data=(tt_x,tt_y),
 
              #좀더 성능이 좋아짐
 ```
+
+# RNN 순환신경망
+- Recurrent neural network(RNN)는 스스로를 반복하면서 이전 단계에서 얻은 정보가 지속되도록 한다.
+- 매순간 일어나는 일들을 해결하기 위해 ex)번역기 문제등
+- 임베딩
+```py
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras.layers import Dense , Embedding,SimpleRNN,Dropout,LSTM,GRU,Layer,Bidirectional
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+from tensorflow.keras.datasets.imdb import load_data
+tf.random.set_seed(22)
+np.random.seed(22)
+(t_x,t_y),(tt_x,tt_y) = load_data(num_words=10000)#전처리가 완성된데이터를 가져옴
+#패딩 작업***
+t_x = tf.keras.preprocessing.sequence.pad_sequences(t_x,maxlen=80)
+tt_x = tf.keras.preprocessing.sequence.pad_sequences(tt_x,maxlen=80)
+t_x.shape,t_y.shape,tt_x.shape,tt_y.shape#데이터 갯수, 데이터길이
+#((25000, 80), (25000,), (25000, 80), (25000,))
+
+#Embedding(단어수, 피처차원)
+m = Sequential()
+m.add(Embedding(10000,100, input_length=80))
+m.add(SimpleRNN(64,dropout=0.5,return_sequences=True))#어떤사이즈로 동작할것?
+m.add(SimpleRNN(64,dropout=0.5))
+m.add(Dense(1))
+
+#편집쉽게 옵션 정의
+배치크기 = 128
+총단어수=10000
+최고문장길이=80
+임베딩길이=100
+뉴런수=64
+d_out=0.5
+lr=0.001
+ec=4
+---
+#RNN 쉘 학습, 빨리 학습되나 장기기억은 안됨
+m = Sequential()
+m.add(Embedding(총단어수,임베딩길이, input_length=최고문장길이))
+m.add(SimpleRNN(뉴런수,dropout=d_out,return_sequences=True))#어떤사이즈로 동작할것?
+m.add(SimpleRNN(뉴런수,dropout=d_out))
+m.add(Dense(1,activation='sigmoid'))
+m.compile(optimizer=Adam(lr),
+         loss=tf.losses.BinaryCrossentropy(),
+         metrics=['acc']
+         )
+hy= m.fit(t_x,t_y,epochs=ec,validation_data=(tt_x,tt_y),validation_freq=2)
+
+---
+#LSTM 중요한 정보를 기억
+#망각게이트로 과거 정보를 어느정도 기억할지 결정한다.
+m = Sequential()
+m.add(Embedding(총단어수,임베딩길이, input_length=최고문장길이))
+m.add(LSTM(뉴런수,dropout=d_out,return_sequences=True))
+m.add(LSTM(뉴런수,dropout=d_out))
+m.add(Dense(1,activation='sigmoid'))
+m.compile(optimizer=Adam(lr),
+         loss=tf.losses.BinaryCrossentropy(),
+         metrics=['acc']
+         )
+hy= m.fit(t_x,t_y,epochs=ec,validation_data=(tt_x,tt_y)
+          ,validation_freq=2)
+#LSTM 이 성능이 더좋음을 볼 수 있다.
+
+---
+#LSTM의 망각게이트와 입력게이트를 하나로 합침,
+#이전 기억이 저장될때마다 단계별 입력은 삭제됨
+m = Sequential()
+m.add(Embedding(총단어수,임베딩길이, input_length=최고문장길이))
+m.add(GRU(뉴런수,dropout=d_out,return_sequences=True))
+m.add(GRU(뉴런수,dropout=d_out))
+m.add(Dense(1,activation='sigmoid'))
+m.compile(optimizer=Adam(lr),
+         loss=tf.losses.BinaryCrossentropy(),
+         metrics=['acc']
+         )
+hy= m.fit(t_x,t_y,epochs=ec,validation_data=(tt_x,tt_y)
+          ,validation_freq=2)
+
+---
+#양방향 RNN 이전 시점의 데이터를 참고해 정답을 예측하나
+#실제 문제는 과거가아닌 미래시점의 데이터에 힌트가 있는경우가있음
+m = Sequential()
+m.add(Embedding(총단어수,임베딩길이, input_length=최고문장길이))
+m.add(Bidirectional(LSTM(뉴런수)))
+m.add(Dropout(0.5))
+m.add(Dense(1,activation='sigmoid'))
+m.compile(optimizer=Adam(lr),
+         loss=tf.losses.BinaryCrossentropy(),
+         metrics=['acc']
+         )
+m.fit(t_x,t_y,epochs=ec,validation_data=(tt_x,tt_y),validation_freq=2)          
+---
+m = Sequential()#임배딩=공간화
+m.add(Embedding(총단어수,임베딩길이, input_length=최고문장길이))
+m.add(Bidirectional(LSTM(뉴런수,return_sequences=True)))
+m.add(Bidirectional(LSTM(뉴런수//2)))
+m.add(Dropout(0.5))
+m.add(Dense(1,activation='sigmoid'))
+m.compile(optimizer=Adam(lr),
+         loss=tf.losses.BinaryCrossentropy(),
+         metrics=['acc']
+         )
+m.fit(t_x,t_y,epochs=2,validation_data=(tt_x,tt_y))
+
+
+```
+- 유사성 tfidf도 임베딩 작업이였다(공간에 매핑하는게 임베딩)
+- 전처리
+     - 문장-결측치확인 토큰화-단어색인-불용어제거-축소된단어색인-어간추출
+
+- 정규화
+    - 월드투백,tfidf,분포요소를 통합해서 묶어줌
