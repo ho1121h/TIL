@@ -299,6 +299,7 @@ t_l_1=t_d[t_d.sentiment==1]['review'].str.split().apply(lambda x:
                                                         [len(i) for i in x])
 sns.distplot(t_l_1.map(lambda x: np.mean(x)),ax=ax2)
 
+## 그램표현: 앞단어뒤에 나올 확률이 높은단어 -N그램
 def N_그램_표현(t,n,g):
     tv = CountVectorizer(ngram_range=(g,g)).fit(t)
     BoW=tv.transform(t)
@@ -329,4 +330,68 @@ N_그램_표현(t_d.review,20,1)
  ('could', 14929),
  ('made', 13562)]
 '''
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='c_w_number',color='c_w')
+fig.show()#엔그램
+
+ck2_data=dict(N_그램_표현(t_d.review,20,2))
+v_df1 = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df1['c_w']=list(ck2_data.keys())
+v_df1['n'] = list(ck2_data.values())
+fig1 = px.bar(v_df1, x='n' ,y='c_w', orientation='h',title='c_w_number',color='c_w')
+fig1.show()#바이그램
+
+ck3_data=dict(N_그램_표현(t_d.review,20,3))
+v_df2 = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df2['c_w']=list(ck3_data.keys())
+v_df2['n'] = list(ck3_data.values())
+fig2 = px.bar(v_df2, x='n' ,y='c_w', orientation='h',title='c_w_number',color='c_w')
+fig2.show()#트리그램
+
+#재정의후
+t_l_0_s = t_d[t_d.sentiment==0]['review']#부정적인 리뷰
+t_l_1_s = t_d[t_d.sentiment==1]['review']#긍정적인 리뷰
+
+t_l_0_data=dict(N_그램_표현(t_l_0_s,20,1))
+v_df = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df['c_w']=list(t_l_0_data.keys())
+v_df['n'] = list(t_l_0_data.values())
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='t_0_ngram',color='c_w')
+fig.show()#엔그램
+#부정적인 리뷰에 많이쓰이는 단어들이나옴
+
+t_l_1_data=dict(N_그램_표현(t_l_1_s,20,1))
+v_df = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df['c_w']=list(t_l_1_data.keys())
+v_df['n'] = list(t_l_1_data.values())
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='t_1_ngram',color='c_w')
+fig.show()#엔그램
+#긍정적인 리뷰에 많이쓰이는 단어들이나옴
+
+t_l_0_data=dict(N_그램_표현(t_l_0_s,20,2))
+v_df = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df['c_w']=list(t_l_0_data.keys())
+v_df['n'] = list(t_l_0_data.values())
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='t_0_bgram',color='c_w')
+fig.show()#바이그램
+#부정적인 리뷰에 많이쓰이는 2개가이어진 단어가 나옴
+t_l_1_data=dict(N_그램_표현(t_l_1_s,20,2))
+v_df = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df['c_w']=list(t_l_1_data.keys())
+v_df['n'] = list(t_l_1_data.values())
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='t_1_bgram',color='c_w')
+fig.show()#바이그램
+
+t_l_0_data=dict(N_그램_표현(t_l_0_s,20,3))
+v_df = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df['c_w']=list(t_l_0_data.keys())
+v_df['n'] = list(t_l_0_data.values())
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='t_0_tgram',color='c_w')
+fig.show()#트리그램
+
+t_l_1_data=dict(N_그램_표현(t_l_1_s,20,3))
+v_df = pd.DataFrame(columns=['c_w','n'])#임의의 컬럼 2개 생성
+v_df['c_w']=list(t_l_1_data.keys())
+v_df['n'] = list(t_l_1_data.values())
+fig = px.bar(v_df, x='n' ,y='c_w', orientation='h',title='t_1_tgram',color='c_w')
+fig.show()#트리그램
 ```
