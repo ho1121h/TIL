@@ -266,4 +266,4 @@ m2.wv.similarity('peter','hook')#0.043825187
 - 하이퍼 파라미터 조정
 - 배치 정규화 
 - RNN
-- 복합성이 높으면 LSTM, 복합성이 낮으면 GRU
+- 복합성이 높으면 LSTM, 복합성이 낮으면 GRUSS
