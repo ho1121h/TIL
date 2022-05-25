@@ -66,4 +66,78 @@ data['가격'] = data['가격'].str.replace('^ +', "")#문장 앞의 공백 제�
 data
 
 ```
-문제: 크롤링은 됐는데 html문서를 전부 가져와버림..
+### 문제: 크롤링은 됐는데 html문서를 전부 가져와버림..
+- fixed 크롤링
+
+```py
+import time
+import requests
+import csv
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import os
+import sys
+from selenium.webdriver.common.keys import Keys
+import chromedriver_autoinstaller
+import warnings
+warnings.filterwarnings('ignore')
+
+options = webdriver.ChromeOptions()
+options.add_argument('window-size=1280,800')
+
+b = webdriver.Chrome('chromedriver', options=options)
+b.implicitly_wait(5)
+
+b.get(url='https://store.steampowered.com/search/?filter=topsellers')
+b.implicitly_wait(10)
+
+평가_list = []
+title_list = []
+for i in range(1,2) :#모든 내용 로드를 위한 동작
+    info_n = b.execute_script("return document.body.scrollHeight")#로드된 내용의 최하단 크기확인
+    b.execute_script("window.scrollTo(0, document.body.scrollHeight)")#로드된 내용의 최하단으로 이동
+    # 확장
+    time.sleep(2)
+    next_n = b.execute_script("return document.body.scrollHeight")
+    if info_n == next_n:
+        break
+    
+    
+    article_raw = b.find_elements_by_class_name('responsive_search_name_combined')
+    # 제목 크롤링 시작
+    for article in article_raw:
+        title = article.find_element_by_class_name('title').text# 태그면 겟 에트리뷰트로 가져와야함
+        title_list.append(title)
+        try:
+            평가 =article.find_element_by_css_selector("span.search_review_summary").get_attribute("data-tooltip-html")
+            평가_list.append(평가)
+        except:
+            평가_list.append("")
+    
+ #  ''' for article in article_raw:
+  #      평가= article.find_element_by_class_name('search_review_summary').get_attribute("data-tooltip-html")
+   #     평가_list.append(평가)'''
+        
+    '''for article in article_raw:
+        평가 = article.find_element_by_class_name('search_review_summary').
+        #평가 = article.get_attribute("data-tooltip-html")#html의 태그를 가져옴,텍스트로..
+        평가_list.append(평가)'''
+    time.sleep(1) 
+import pandas as pd
+import numpy as np
+# 수집된 url_list, title_list로 판다스 데이터프레임 만들기
+df = pd.DataFrame({'매출 순위':title_list,'평가':평가_list})
+df
+
+df.to_csv("steam.csv", encoding='utf-8-sig')
+```
+```
+for article in article_raw:
+        평가 = article.find_element_by_class_name('search_review_summary').
+        #평가 = article.get_attribute("data-tooltip-html")#html의 태그를 가져옴,텍스트로..
+        평가_list.append(평가)
+
+        를
+
+        평가 =article.find_element_by_css_selector("span.search_review_summary").get_attribute("data-tooltip-html")
+            평가_list.append(평가)로 고치니 됨```
