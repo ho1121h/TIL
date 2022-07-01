@@ -193,3 +193,49 @@ df = pd.DataFrame(data)
 df.head()
 
 ```
+
+## 당근마켓 크롤링 연습
+```py
+import requests
+from bs4 import BeautifulSoup
+webpage  = requests.get("https://www.daangn.com/hot_articles")
+# 예시로 중고거래 인기 매물
+soup = BeautifulSoup(webpage.content , "html.parser")
+getitem = soup.select("#content > section.cards-wrap > article")#css셀렉터
+
+for item in getitem: # 전체 값에서 하나씩 꺼내오닌깐 0인덱스로 꺼내와야 오류가 없을것
+#제목
+ print( item.select('a > div.card-desc > h2 ')[0].text.strip(), end=",")
+#가격
+ print( item.select('a > div.card-desc > div.card-price')[0].text.strip(),end=",")
+#위치
+ print( item.select('a > div.card-desc > div.card-region-name')[0].text.strip(),end=",")
+#관심,채팅( 인기도)
+ print( item.select('a > div.card-desc > div.card-counts')[0].text.strip().replace(' ', '').replace('\n', '').replace('∙', ','))
+
+# 데이터에 담기 
+
+from tqdm import tqdm
+
+item_list = []
+
+for item in tqdm(getitem):
+    #제목
+         a = item.select('a > div.card-desc > h2 ')[0].text.strip()
+    #가격
+         b= item.select('a > div.card-desc > div.card-price')[0].text.strip()
+    #위치
+         c =item.select('a > div.card-desc > div.card-region-name')[0].text.strip()
+    #관심,채팅( 인기도)
+         d= item.select('a > div.card-desc > div.card-counts')[0].text.strip().replace(' ', '').replace('\n', '').replace('∙', ',')
+        
+         item_list.append({
+             '제목' : a,
+             '가격' : b,
+             '위치' : c,
+             '관심,채팅' : d
+         })
+import pandas as pd
+
+df = pd.DataFrame(item_list)
+```
