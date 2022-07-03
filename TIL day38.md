@@ -239,3 +239,54 @@ import pandas as pd
 
 df = pd.DataFrame(item_list)
 ```
+
+
+## 번개장터 크롤링 연습
+- 리퀘스트 
+- 번개장터 사이트에서 소스코드 보기 한 후 json 주소 찾기
+-  검색할 키워드와 크롤링할 페이지 수 를 input 한다
+- 
+```py
+
+pid = [] # 제품 아이디
+category = input()
+for page in tqdm(range(int(input()))):
+    url = f'https://api.bunjang.co.kr/api/1/find_v2.json?order=date&n=96&page={page}&req_ref=search&q={category}&stat_device=w&stat_category_required=1&version=4'
+    response = requests.get(url)
+    datas = response.json()['list']
+    
+    ids = [data['pid'] for data in datas] #리스트 생성
+    pid.extend(ids)# 추가
+items=[]
+for i in pid: # 제품 아이디 하나씩 훑기
+    url = f'https://api.bunjang.co.kr/api/1/product/{i}/detail_info.json?version=4'
+    response = requests.get(url) # 리퀘스트
+    try:
+        details = response.json()['item_info'] #제이슨 파일을 그대로 가져오되 카테고리 이름, 페이옵션을 삭제
+        details.pop('category_name')
+        details.pop('pay_option')
+        items.append(details)# 가져오면 딕셔너리 형태임
+    except:# 오류나면 에러 출력
+        print('error')
+
+#데이터프레임화
+df = pd.DataFrame(items)
+bunjang_df = df[['name','price','location','description_for_detail','num_item_view','pid']]
+bunjang_df = bunjang_df.rename({'name':'title','location':'region','description_for_detail':'desc','num_item_view':'view_counts'},axis='columns')
+bunjang_df['link'] = 'https://m.bunjang.co.kr/products/'+ bunjang_df['pid']
+bunjang_df['market'] = '번개장터'
+bunjang_df['keyword'] = category
+bunjang_df.drop(['pid'], axis=1)
+
+# 전처리
+bunjang_df.reset_index(drop = True)
+bunjang_df['desc'] = bunjang_df['desc'] \
+.replace(r'[^가-힣 ]', ' ', regex=True) \
+.replace("'", '') \
+.replace(r'\s+', ' ', regex=True) \
+.str.strip() \
+.str[:255]
+bunjang_df = bunjang_df[bunjang_df['desc'].str.strip().astype(bool)]
+
+bunjang_df.to_csv("번개장터크롤링.csv",encoding="utf-8")
+```
