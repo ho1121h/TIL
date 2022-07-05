@@ -290,3 +290,39 @@ bunjang_df = bunjang_df[bunjang_df['desc'].str.strip().astype(bool)]
 
 bunjang_df.to_csv("번개장터크롤링.csv",encoding="utf-8")
 ```
+## 타임스탬프 변환
+- 유닉스 시계를 기준으로 측정함
+```py
+from datetime import datetime
+# 일-월-년 으로 출력할려면 사용
+
+
+bunjang_df['update_time']=bunjang_df['update_time'].map(lambda x : datetime.fromtimestamp(x).strftime('%y-%m-%d') ) 
+bunjang_df['update_time']
+
+
+```
+- 추가 전처리
+```py
+#bunjang_df.query('desc.str.contains("매입|삽니다|구매|최고가|전기종")', engine='python')
+
+drop_list = bunjang_df.query('desc.str.contains("매입|삽니다|구매|최고가|전기종")', engine='python').index
+drop_bunjang_df = bunjang_df.drop(drop_list)
+
+
+drop_bunjang_df.price = drop_bunjang_df.price.astype('float')
+
+q1= drop_bunjang_df['price'].quantile(0.25)
+q3= drop_bunjang_df['price'].quantile(0.75)
+condition=drop_bunjang_df['price']>q3+1.5*iqr
+
+drop_price_list = drop_bunjang_df[condition].index
+
+drop_bunjang_df.drop(drop_price_list, inplace= True)
+
+drop_bunjang_df.reset_index(inplace= True)
+
+drop_bunjang_df.drop('index', axis= 1, inplace= True)
+
+drop_bunjang_df
+```
