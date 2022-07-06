@@ -326,3 +326,87 @@ drop_bunjang_df.drop('index', axis= 1, inplace= True)
 
 drop_bunjang_df
 ```
+
+## 당근마켓 크롤링
+```py
+import requests
+import json
+import pandas as pd
+from tqdm import tqdm
+from bs4 import BeautifulSoup
+
+item_list = []
+category =input() # 검색어 입력
+
+for i in tqdm(range(1,int(input()))):
+    url =f"https://www.daangn.com/search/{category}/more/flea_market?page={i}"
+    resp = requests.get(url)
+    soup = BeautifulSoup(resp.content , "html.parser")
+    getitem = soup.select(".flea-market-article")
+    
+    for item in getitem:   
+        try:
+            item_list.append({
+                 'title' : item.select('.article-title')[0].text.strip(),
+                 'price' : item.select('.article-price')[0].text.strip(),
+                 'region' : item.select('.article-region-name')[0].text.strip(),
+                 'desc' : item.select('.article-content')[0].text.strip()
+             })
+        except:
+            print('error')
+
+import pandas as pd
+
+df = pd.DataFrame(item_list)
+df.head()
+df.reset_index(drop = True)
+df['desc'] = df['desc'] \
+.replace("'", '') \
+.replace(r'\s+', ' ', regex=True) \
+.str.strip() \
+.str[:255]
+df = df[df['desc'].str.strip().astype(bool)]
+
+df['price'] = df['price'].str.replace("만",'0000')
+df['price'] = df['price'].str.replace(r'[^0-9]', '', regex=True)
+df['price']=df['price'].replace('^ +','')
+df['price']=df['price'].replace('',np.nan) 
+df=df.dropna(how='any') 
+df
+df.price = df.price.astype('float')
+
+q1= df['price'].quantile(0.25)
+q3= df['price'].quantile(0.75)
+iqr=q3-q1
+condition=df['price']>q3+1.5*iqr
+
+drop_price_list = df[condition].index
+
+df.drop(drop_price_list, inplace= True)
+
+df.reset_index(inplace= True)
+
+df.drop('index', axis= 1, inplace= True)
+
+df
+df.price = df.price.astype('float')
+
+q1= df['price'].quantile(0.25)
+q3= df['price'].quantile(0.75)
+iqr=q3-q1
+condition=df['price']>q3+1.5*iqr
+
+drop_price_list = df[condition].index
+
+df.drop(drop_price_list, inplace= True)
+
+df.reset_index(inplace= True)
+
+df.drop('index', axis= 1, inplace= True)
+
+df
+
+
+
+
+```
