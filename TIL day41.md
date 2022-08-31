@@ -210,3 +210,43 @@ scheduler = None
 
 best_model = train(model, optimizer, train_loader, val_loader, scheduler, device)
  ```
+
+ ## 모델 저장 
+
+ ```py
+test_input_list = sorted(glob.glob('./test_input/*.csv'))
+test_target_list = sorted(glob.glob('./test_target/*.csv'))
+
+def inference_per_case(model, test_loader, test_path, device):
+    model.to(device)
+    model.eval()
+    pred_list = []
+    with torch.no_grad():
+        for X in iter(test_loader):
+            X = X.float().to(device)
+            
+            model_pred = model(X)
+            
+            model_pred = model_pred.cpu().numpy().reshape(-1).tolist()
+            
+            pred_list += model_pred
+    
+    submit_df = pd.read_csv(test_path)
+    submit_df['rate'] = pred_list
+    submit_df.to_csv(test_path, index=False)
+
+
+for test_input_path, test_target_path in zip(test_input_list, test_target_list):
+    test_dataset = CustomDataset([test_input_path], [test_target_path], True)
+    test_loader = DataLoader(test_dataset, batch_size = CFG['BATCH_SIZE'], shuffle=False, num_workers=0)
+    inference_per_case(best_model, test_loader, test_target_path, device)
+ ```
+ ```py
+import zipfile
+os.chdir("./test_target/")
+submission = zipfile.ZipFile("../submission.zip", 'w')
+for path in test_target_list:
+    path = path.split('/')[-1]
+    submission.write(path)
+submission.close()
+ ```
