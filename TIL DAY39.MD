@@ -112,3 +112,4 @@ class PollsConfig(AppConfig):
 를 입력하면 우리들의 메인 프로젝트에 모델 정보가 등록이된다.
 즉, 모델의 정보가 갱신됨
 - 모델의 정보를 보고싶다면 "python manage.py sqlmigrate polls + 변경기록번호"를 입력
+

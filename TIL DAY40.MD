@@ -212,3 +212,8 @@ urlpatterns = [
 
 
 ```
+## 실행 
+```py
+python manage.py runserver
+
+```
