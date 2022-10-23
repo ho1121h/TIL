@@ -9,3 +9,15 @@
 1. 자바 패키지 생성
 2. 자바 패키지에 클래스 생성 -> 자바 파일 생성됨
 3. 
+```java
+package org.opentutorials.javatutorials.eclipse;
+
+public class 자바연습 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		System.out.println(false);
+	}
+
+}
+```
